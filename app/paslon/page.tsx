@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import axios from "axios";
+import axios from "@/app/lib/axios";
 interface paslon {
   id: number;
-  image: string;
   nama: string;
   nomor_urut: string;
+  image: string;
   partai_id: string;
   slogan: string;
 }
@@ -14,16 +14,7 @@ interface paslon {
 export default function Tabel() {
   const [paslon, setPaslon] = useState<paslon[]>([]);
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("/api/paslon"); // Sesuaikan endpoint API Anda
-        setPaslon(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
+    axios.get("/paslon").then((response) => setPaslon(response.data.data));
   }, []);
 
   return (
@@ -32,28 +23,39 @@ export default function Tabel() {
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
           <tr>
-            <th style={{ border: "8px solid #ddd", padding: "8px" }}>ID</th>
-            <th style={{ border: "8px solid #ddd", padding: "8px" }}>Nama</th>
-            <th style={{ border: "8px solid #ddd", padding: "8px" }}>
+            <th style={{ border: "2px solid #ddd", padding: "2px" }}>
+              Nama Paslon
+            </th>
+            <th style={{ border: "2px solid #ddd", padding: "2px" }}>
               Nomor Urut
             </th>
-            <th style={{ border: "8px solid #ddd", padding: "8px" }}>Gambar</th>
-            <th style={{ border: "8px solid #ddd", padding: "8px" }}>Slogan</th>
+            <th style={{ border: "2px solid #ddd", padding: "2px" }}>Gambar</th>
+            <th style={{ border: "2px solid #ddd", padding: "2px" }}>Partai</th>
+            <th style={{ border: "2px solid #ddd", padding: "2px" }}>Slogan</th>
           </tr>
         </thead>
         <tbody>
           {paslon.map((paslon) => (
             <tr key={paslon.id}>
-              <td style={{ border: "8px solid #ddd", padding: "8px" }}>
-                {paslon.id}
-              </td>
-              <td style={{ border: "8px solid #ddd", padding: "8px" }}>
+              <td style={{ border: "2px solid #ddd", padding: "2px" }}>
                 {paslon.nama}
               </td>
-              <td style={{ border: "8px solid #ddd", padding: "8px" }}>
+              <td style={{ border: "2px solid #ddd", padding: "2px" }}>
                 {paslon.nomor_urut}
               </td>
-              <td style={{ border: "8px solid #ddd", padding: "8px" }}>
+              <td style={{ border: "2px solid #ddd", padding: "2px" }}>
+                <img
+                  src={`${process.env.NEXT_PUBLIC_API_BACKEND}/storage/images/${paslon.image}`}
+                  width={350}
+                  height={350}
+                  className="w-full h-auto object-cover rounded-lg"
+                  alt="..."
+                />
+              </td>
+              <td style={{ border: "2px solid #ddd", padding: "2px" }}>
+                {paslon.partai_id}
+              </td>
+              <td style={{ border: "2px solid #ddd", padding: "2px" }}>
                 {paslon.slogan}
               </td>
             </tr>
