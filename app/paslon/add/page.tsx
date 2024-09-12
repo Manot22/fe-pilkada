@@ -27,11 +27,6 @@ const Create = () => {
       return;
     }
 
-    if (!image) {
-      alert("Please select an image");
-      return;
-    }
-
     try {
       // Buat FormData untuk mengirim file dan data lainnya
       const formData = new FormData();
@@ -40,11 +35,11 @@ const Create = () => {
       formData.append("image", image); // append gambar
       formData.append("slogan", slogan); // append slogan
       formData.append("nama_partai", nama_partai); // append slogan
-      formData.append("sura_paslon", suara_paslon); // append slogan
+      formData.append("suara_paslon", suara_paslon); // append slogan
       // Kirim request dengan axios
       await axios.post("http://localhost:8000/api/paslon", formData, {
         headers: {
-          "Content-Type": "application/json", // Pastikan header ini diset
+          "Content-Type": "multipart/form-data", // Pastikan header ini diset
         },
       });
 
@@ -100,12 +95,6 @@ const Create = () => {
             />
           </div>
           <div>
-            <label
-              htmlFor="image"
-              className="block text-gray-700 font-medium mb-1"
-            >
-              Gambar
-            </label>
             <input
               id="image"
               type="file"

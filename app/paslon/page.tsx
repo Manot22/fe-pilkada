@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 import Layout from "@/components/Layout";
+import Image from "next/image";
 
 interface PaslonItem {
   id: number;
@@ -20,9 +21,7 @@ const Paslon = () => {
   useEffect(() => {
     axios
       .get(`http://localhost:8000/api/paslon`)
-      .then((response) => {
-        setPaslon(response.data.data);
-      })
+      .then((response) => setPaslon(response.data.data))
       .catch((error) => console.error("Error fetching paslon items:", error));
   }, []);
 
@@ -57,13 +56,19 @@ const Paslon = () => {
                   >
                     <div className="flex flex-col">
                       <h2 className="text-lg font-medium text-gray-900">
-                       Nama: {item.nama}
+                        Nama: {item.nama}
                       </h2>
                       <p className="text-gray-600">
                         Nomor Urut: {item.nomor_urut}
                       </p>
+                      <Image
+                        src={`${process.env.NEXT_PUBLIC_API_BACKEND}/storage/paslon/${paslon}`}
+                        width={350}
+                        height={350}
+                        className="w-full max-h-64 object-cover rounded-lg"
+                        alt="..."
+                      />
                       <p className="text-gray-600">Slogan: {item.slogan}</p>
-                      {/* <Image/> */}
                       <p className="text-gray-600">
                         Suara Paslon: {item.suara_paslon}
                       </p>

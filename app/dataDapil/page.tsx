@@ -1,5 +1,7 @@
-import Layout from "@/components/Layout";
 import Link from "next/link";
+
+// components
+import Layout from "@/components/Layout";
 
 const DataDapil = () => {
   return (
