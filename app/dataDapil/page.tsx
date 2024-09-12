@@ -1,9 +1,35 @@
+import { useState, useEffect } from "react";
+import axios from "axios";
 import Link from "next/link";
 
 // components
 import Layout from "@/components/Layout";
 
+interface dapil {
+  id: number;
+  nama_dapil: string;
+  suara_dapil: string;
+  paslon_id: string;
+}
+
 const DataDapil = () => {
+  const [dataDapil, setDataDapil] = useState<dapil[]>([]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:8000/api/dapil")
+      .then((response) => setDataDapil(response.data.data))
+      .catch((error) => console.error("Error fetching paslon items:", error));
+  });
+
+  const deleteDapil = (id: number) => {
+    axios
+      .delete(`http://localhost:8000/api/dapil/${id}`)
+      .then(() =>
+        setDataDapil(dataDapil.filter((dataDapil) => dataDapil.id !== id))
+      )
+      .catch((error) => console.error("Error deleting paslon:", error));
+  };
   return (
     <Layout>
       <div className="min-h-screen bg-gray-100 py-8 px-4">

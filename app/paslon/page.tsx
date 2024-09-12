@@ -62,7 +62,7 @@ const Paslon = () => {
                         Nomor Urut: {item.nomor_urut}
                       </p>
                       <Image
-                        src={`${process.env.NEXT_PUBLIC_API_BACKEND}/storage/paslon/${paslon}`}
+                        src={`${process.env.NEXT_PUBLIC_API_BACKEND}/storage/images/${item.image}`}
                         width={350}
                         height={350}
                         className="w-full max-h-64 object-cover rounded-lg"
