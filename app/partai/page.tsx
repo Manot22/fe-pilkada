@@ -70,7 +70,9 @@ const Partai = () => {
               ))}
             </ul>
           ) : (
-            <p className="text-gray-600">Daftar kosong.</p>
+            <p className="flex justify-center items-center">
+              Daftar Partai kosong.
+            </p>
           )}
         </div>
       </div>

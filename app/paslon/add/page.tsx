@@ -1,24 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
 const Create = () => {
   const [nama, setNama] = useState("");
   const [nomor_urut, setNomorUrut] = useState("");
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState<File | null>(null);
   const [slogan, setSlogan] = useState("");
-  const [daftarPartai, setDaftarPartai] = useState([]);
-  const [selectPartai, setSelectPartai] = useState<number | null>(null);
+  const [nama_partai, setNamaPartai] = useState("");
+  const [suara_paslon, setSuaraPaslon] = useState("");
   const router = useRouter();
 
-  useEffect(() => {
-    axios
-      .get(`http://localhost:8000/api/partai`)
-      .then((daftarPartai) => setDaftarPartai(daftarPartai.data.data))
-      .catch((error) => console.error("Error fetching Partai items:", error));
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get(`http://localhost:8000/api/partai`)
+  //     .then((daftarPartai) => setDaftarPartai(daftarPartai.data.data))
+  //     .catch((error) => console.error("Error fetching Partai items:", error));
+  // }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,17 +27,31 @@ const Create = () => {
       return;
     }
 
+    if (!image) {
+      alert("Please select an image");
+      return;
+    }
+
     try {
-      await axios.post("http://localhost:8000/api/paslon", {
-        nama,
-        nomor_urut,
-        image,
-        slogan,
-        partai_id: selectPartai,
+      // Buat FormData untuk mengirim file dan data lainnya
+      const formData = new FormData();
+      formData.append("nama", nama); // append nama
+      formData.append("nomor_urut", nomor_urut); // append nomor_urut
+      formData.append("image", image); // append gambar
+      formData.append("slogan", slogan); // append slogan
+      formData.append("nama_partai", nama_partai); // append slogan
+      formData.append("sura_paslon", suara_paslon); // append slogan
+      // Kirim request dengan axios
+      await axios.post("http://localhost:8000/api/paslon", formData, {
+        headers: {
+          "Content-Type": "application/json", // Pastikan header ini diset
+        },
       });
+
+      // Redirect setelah berhasil
       router.push("/paslon");
     } catch (error) {
-      console.error("Error creating Paslon:", error);
+      console.error("gagal nambah data paslon:", error);
     }
   };
 
@@ -95,11 +109,13 @@ const Create = () => {
             <input
               id="image"
               type="file"
-              value={image}
-              onChange={(e) => setImage(e.target.value)}
+              onChange={(e) =>
+                setImage(e.target.files ? e.target.files[0] : null)
+              }
               required
-              placeholder="Gambar"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+              className="w-full rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-sm"
+              accept=".jpeg,.jpg,.png,.gif"
+              placeholder="Masukkan Foto"
             />
           </div>
           <div>
@@ -120,28 +136,38 @@ const Create = () => {
             />
           </div>
           <div>
-            <select
-              value={selectPartai || ""}
-              onChange={(e) => setSelectPartai(Number(e.target.value))}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+            <label
+              htmlFor="nama_partai"
+              className="block text-gray-700 font-medium mb-1"
             >
-              <option value="">Pilih Partai</option>
-              {daftarPartai.length > 0 ? (
-                daftarPartai.map((partai: any) => {
-                  //   console.log("partai", partai);
-
-                  return (
-                    <option key={partai.id} value={partai.id}>
-                      {partai.nama_partai}
-                    </option>
-                  );
-                })
-              ) : (
-                <option value="">Tidak Ada Daftar Partai</option>
-              )}
-            </select>
+              Nama Partai
+            </label>
+            <input
+              id="nama_partai"
+              type="text"
+              value={nama_partai}
+              onChange={(e) => setNamaPartai(e.target.value)}
+              placeholder="Nama Partai"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+              required
+            />
           </div>
-
+          <div>
+            <label
+              htmlFor="suara_paslon"
+              className="block text-gray-700 font-medium mb-1"
+            >
+              Suara Partai
+            </label>
+            <input
+              id="suara_paslon"
+              type="text"
+              value={suara_paslon}
+              onChange={(e) => setSuaraPaslon(e.target.value)}
+              placeholder="Suara Paslon"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+            />
+          </div>
           <button
             type="submit"
             className="w-full bg-blue-500 text-white rounded-lg px-4 py-2 shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
