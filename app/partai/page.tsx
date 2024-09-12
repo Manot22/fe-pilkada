@@ -3,78 +3,64 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 
-interface PaslonItem {
+interface PartaiId {
   id: number;
-  nama: string;
-  nomor_urut: string;
-  image: string;
-  slogan: string;
-  partai: {
-    id: number;
-    nama_partai: string;
-    created_at: string;
-    updated_at: string;
-  };
+  nama_partai: string;
 }
 
-const Paslon = () => {
-  const [paslon, setPaslon] = useState<PaslonItem[]>([]);
+const Partai = () => {
+  const [partai, setPartai] = useState<PartaiId[]>([]);
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8000/api/paslon`)
+      .get(`http://localhost:8000/api/partai`)
       .then((response) => {
-        setPaslon(response.data.data);
+        setPartai(response.data.data);
       })
-      .catch((error) => console.error("Error fetching paslon items:", error));
+      .catch((error) => console.error("Error fetching partai items:", error));
   }, []);
 
-  const deletePasol = (id: number) => {
+  const deletePartai = (id: number) => {
     axios
-      .delete(`http://localhost:8000/api/paslon/${id}`)
-      .then(() => setPaslon(paslon.filter((paslon) => paslon.id !== id)))
-      .catch((error) => console.error("Error deleting paslon:", error));
+      .delete(`http://localhost:8000/api/partai/${id}`)
+      .then(() => setPartai(partai.filter((partai) => partai.id !== id)))
+      .catch((error) => console.error("Error deleting partai:", error));
   };
 
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4">
       <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
         <div className="p-6">
-          <h1 className="text-2xl font-semibold text-gray-800 mb-6">Paslon</h1>
+          <h1 className="text-2xl font-semibold text-gray-800 mb-6">
+            Daftar Partai
+          </h1>
           <div className="mb-6">
-            <Link href="/paslon/add">
+            <Link href="/partai/create">
               <button className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
-                Tambah Paslon
+                Tambah Partai
               </button>
             </Link>
           </div>
-          {paslon.length > 0 ? (
+          {partai.length > 0 ? (
             <ul>
-              {paslon.map((item) => (
+              {partai.map((item) => (
                 <li
                   key={item.id}
                   className="bg-gray-50 p-4 mb-4 rounded-lg shadow-sm flex items-center justify-between"
                 >
                   <div className="flex flex-col">
                     <h2 className="text-lg font-medium text-gray-900">
-                      {item.nama}
+                      {item.nama_partai}
                     </h2>
-                    <p className="text-gray-600">
-                      Nomor Urut: {item.nomor_urut}
-                    </p>
-                    <p className="text-gray-600">
-                      Gabungan Partai: {item.partai.nama_partai}
-                    </p>
-                    <p className="text-gray-600">Slogan: {item.slogan}</p>
                   </div>
                   <div className="flex space-x-2">
-                    <Link href={`/paslon/${item.id}/edit`}>
+                    <Link href={`/partai/${item.id}/edit`}>
                       <button className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600">
                         Edit
                       </button>
                     </Link>
                     <button
-                      onClick={() => deletePasol(item.id)}
+                      onClick={() => deletePartai(item.id)}
                       className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
                     >
                       Hapus dari Daftar
@@ -84,7 +70,7 @@ const Paslon = () => {
               ))}
             </ul>
           ) : (
-            <p className="text-gray-600">Daftar Paslon kosong.</p>
+            <p className="text-gray-600">Daftar kosong.</p>
           )}
         </div>
       </div>
@@ -92,4 +78,4 @@ const Paslon = () => {
   );
 };
 
-export default Paslon;
+export default Partai;
