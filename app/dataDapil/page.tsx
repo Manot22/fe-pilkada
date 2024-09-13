@@ -1,6 +1,9 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Link from "next/link";
+import Cookies from "js-cookie";
 
 // components
 import Layout from "@/components/Layout";
@@ -10,17 +13,29 @@ interface dapil {
   nama_dapil: string;
   suara_dapil: string;
   paslon_id: string;
+  paslon: {
+    id: number;
+    nama: string;
+    nomor_urut: string;
+    image: string;
+    suara_paslon: string;
+    nama_partai: string;
+    created_at: string;
+    updated_at: string;
+  };
 }
 
 const DataDapil = () => {
+  const token = Cookies.get("token");
   const [dataDapil, setDataDapil] = useState<dapil[]>([]);
 
   useEffect(() => {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     axios
       .get("http://localhost:8000/api/dapil")
       .then((response) => setDataDapil(response.data.data))
       .catch((error) => console.error("Error fetching paslon items:", error));
-  });
+  }, []);
 
   const deleteDapil = (id: number) => {
     axios
@@ -29,6 +44,7 @@ const DataDapil = () => {
         setDataDapil(dataDapil.filter((dataDapil) => dataDapil.id !== id))
       )
       .catch((error) => console.error("Error deleting paslon:", error));
+    alert("hapus data berhasil");
   };
   return (
     <Layout>
@@ -39,38 +55,51 @@ const DataDapil = () => {
               Data Dapil
             </h1>
             <div className="mb-6">
-              <Link href="/dataDapil/add">
+              <Link href="dataDapil/add">
                 <button className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
                   Tambah Dapil
                 </button>
               </Link>
             </div>
-            <ul>
-              <li className="bg-gray-50 p-4 mb-4 rounded-lg shadow-sm flex items-center justify-between">
-                <div className="flex flex-col">
-                  <p className="text-black">Nama Dapil</p>
-                  <p className="text-gray-600">Suara Dapil</p>
-                  <p className="text-gray-600">Paslon ID</p>
-                </div>
-                <div className="flex space-x-2">
-                  <Link href={`/dataDapil/edit`}>
-                    <button className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600">
-                      Edit
-                    </button>
-                  </Link>
-                  <button
-                    // onClick={() => deletePasol(item.id)}
-                    className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+            {dataDapil.length > 0 ? (
+              <ul>
+                {dataDapil.map((item) => (
+                  <li
+                    key={item.id}
+                    className="bg-gray-50 p-4 mb-4 rounded-lg shadow-sm flex items-center justify-between"
                   >
-                    Hapus dari Daftar
-                  </button>
-                </div>
-              </li>
-            </ul>
-
-            <p className="font-bold flex justify-center items-center">
-              Daftar Dapil Kosong.
-            </p>
+                    <div className="flex flex-col">
+                      <p className="text-black">
+                        Nama Dapil: {item.nama_dapil}
+                      </p>
+                      <p className="text-gray-600">
+                        Suara Dapil: {item.suara_dapil}
+                      </p>
+                      <p className="text-gray-600">
+                        Paslon ID: {item.paslon.nama}
+                      </p>
+                    </div>
+                    <div className="flex space-x-2">
+                      <Link href={`/dataDapil/${item.id}/edit`}>
+                        <button className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600">
+                          Edit
+                        </button>
+                      </Link>
+                      <button
+                        onClick={() => deleteDapil(item.id)}
+                        className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                      >
+                        Hapus dari Daftar
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="font-bold flex justify-center items-center">
+                Daftar Dapil Kosong.
+              </p>
+            )}
           </div>
         </div>
       </div>

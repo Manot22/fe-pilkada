@@ -28,7 +28,7 @@ const Create = () => {
     }
 
     try {
-      // Buat FormData untuk mengirim file dan data lainnya
+      // Buat FormData untuk mengirim file dan data lainnya 
       const formData = new FormData();
       formData.append("nama", nama); // append nama
       formData.append("nomor_urut", nomor_urut); // append nomor_urut

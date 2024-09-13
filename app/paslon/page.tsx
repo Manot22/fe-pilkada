@@ -4,6 +4,7 @@ import axios from "axios";
 import Link from "next/link";
 import Layout from "@/components/Layout";
 import Image from "next/image";
+import Cookies from "js-cookie";
 
 interface PaslonItem {
   id: number;
@@ -16,9 +17,11 @@ interface PaslonItem {
 }
 
 const Paslon = () => {
+  const token = Cookies.get("token");
   const [paslon, setPaslon] = useState<PaslonItem[]>([]);
 
   useEffect(() => {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     axios
       .get(`http://localhost:8000/api/paslon`)
       .then((response) => setPaslon(response.data.data))
@@ -76,7 +79,7 @@ const Paslon = () => {
                         Nama Partai: {item.nama_partai}
                       </p>
                     </div>
-                    <div className="flex space-x-2">
+                    <div className="flex flex-col gap-4 ml-4">
                       <Link href={`/paslon/${item.id}/edit`}>
                         <button className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600">
                           Edit

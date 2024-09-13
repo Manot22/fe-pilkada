@@ -1,12 +1,40 @@
 "use client";
 
-// import axios from "axios";
-// import { useState, useEffect } from "react";
-// import { useRouter } from "next/navigation";
+import axios from "axios";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
+import { error } from "console";
 
 const KecamatanCreate = () => {
+  const [nama_kecamatan, setNamaKecamatan] = useState("");
+  const [suara_kecamatan, setSuaraKecamatan] = useState("");
+  const [daftarPaslon, setDaftarPaslon] = useState([]);
+  const [selectedPaslon, selectedPaslon] = useState("");
+  const [dapil_id, setDapilId] = useState("");
+  const token = Cookies.get("token");
+  const router = useRouter();
+
+  useEffect(() => {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    axios
+      .get("http://localhost:8000/api/kecamatan")
+      .then((daftarPaslon) => setDaftarPaslon(daftarPaslon.data.data))
+      .catch((error) => console.error("Error Fetching kecamatan:", error));
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    try {
+      await axios.post("http://localhost:8000/api/kecamatan", {
+        nama_kecamatan,
+        suara_kecamatan,
+        paslon_id: selectedPaslon,
+      });
+      router.push("/dataKec");
+    } catch (error) {
+      console.error("Error menambah Data Kecamatan", error);
+    }
   };
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4">
@@ -23,11 +51,11 @@ const KecamatanCreate = () => {
               Nama Kecamatan
             </label>
             <input
-              id="nama_dapil"
+              id="nama_kecamatan"
               type="text"
-              // value=
-              // onChange={(e) => setNama(e.target.value)}
-              placeholder="Nama Dapil"
+              value={nama_kecamatan}
+              onChange={(e) => setNamaKecamatan(e.target.value)}
+              placeholder="Nama Kecamatan"
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
               required
             />
