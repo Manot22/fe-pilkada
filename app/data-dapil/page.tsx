@@ -44,7 +44,6 @@ const DataDapil = () => {
         setDataDapil(dataDapil.filter((dataDapil) => dataDapil.id !== id))
       )
       .catch((error) => console.error("Error deleting paslon:", error));
-    alert("hapus data berhasil");
   };
   return (
     <Layout>
@@ -55,50 +54,48 @@ const DataDapil = () => {
               Data Dapil
             </h1>
             <div className="mb-6">
-              <Link href="dataDapil/add">
+              <Link href="data-dapil/add">
                 <button className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
                   Tambah Dapil
                 </button>
               </Link>
             </div>
             {dataDapil.length > 0 ? (
-              <ul>
-                {dataDapil.map((item) => (
-                  <li
-                    key={item.id}
-                    className="bg-gray-50 p-4 mb-4 rounded-lg shadow-sm flex items-center justify-between"
-                  >
-                    <div className="flex flex-col">
-                      <p className="text-black">
-                        Nama Dapil: {item.nama_dapil}
-                      </p>
-                      <p className="text-gray-600">
-                        Suara Dapil: {item.suara_dapil}
-                      </p>
-                      <p className="text-gray-600">
-                        Paslon ID: {item.paslon.nama}
-                      </p>
-                    </div>
-                    <div className="flex space-x-2">
-                      <Link href={`/dataDapil/${item.id}/edit`}>
-                        <button className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600">
-                          Edit
+              <table>
+                <thead className="bg-indigo-600/95 text-white">
+                  <tr>
+                    <th>Nama Dapil</th>
+                    <th>Suara Dapil</th>
+                    <th>Paslon</th>
+                    <th>Fungsi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dataDapil.map((item) => (
+                    <tr key={item.id}>
+                      <td>{item.nama_dapil}</td>
+                      <td>{item.suara_dapil}</td>
+                      <td>{item.paslon.nama}</td>
+                      <td className="flex gap-4 justify-center">
+                        {" "}
+                        <Link href={`/data-dapil/${item.id}/edit`}>
+                          <button className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600">
+                            Edit
+                          </button>
+                        </Link>
+                        <button
+                          onClick={() => deleteDapil(item.id)}
+                          className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                        >
+                          Hapus
                         </button>
-                      </Link>
-                      <button
-                        onClick={() => deleteDapil(item.id)}
-                        className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                      >
-                        Hapus dari Daftar
-                      </button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             ) : (
-              <p className="font-bold flex justify-center items-center">
-                Daftar Dapil Kosong.
-              </p>
+              <p>Daftar dapil tidak tersedia</p>
             )}
           </div>
         </div>

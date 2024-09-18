@@ -1,17 +1,21 @@
 "use client";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Cookies from "js-cookie";
 
-const Edit = () => {
-  const [nama_dapil, setNamaDapil] = useState("");
-  const [suara_dapil, setSuaraDapil] = useState("");
+const EditDesa = () => {
+  const [nama_desa, setNamaDesa] = useState("");
+  const [suara_desa, setSuaraDesa] = useState("");
+  const [dafatarKecamatan, setDaftarKecamatan] = useState([]);
+  const [selectedKecamatan, setSelectedKecamatan] = useState<number | null>(
+    null
+  );
   const [daftarPaslon, setDaftarPaslon] = useState([]);
   const [selectedPaslon, setSelectedPaslon] = useState<number | null>(null);
-  const token = Cookies.get("token");
   const params = useParams();
   const router = useRouter();
+  const token = Cookies.get("token");
 
   useEffect(() => {
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -22,81 +26,119 @@ const Edit = () => {
   }, []);
 
   useEffect(() => {
+    axios
+      .get(`http://localhost:8000/api/kecamatan`)
+      .then((dafatarKecamatan) =>
+        setDaftarKecamatan(dafatarKecamatan.data.data)
+      )
+      .catch((error) =>
+        console.error("Error fetching kecamatan items:", error)
+      );
+  }, []);
+
+  useEffect(() => {
     const id = params.id;
     if (id) {
       axios
-        .get(`http://localhost:8000/api/dapil/${id}`)
+        .get(`http://localhost:8000/api/desa/${id}`)
         .then((response) => {
-          const dapil = response.data.data;
-          setNamaDapil(dapil.nama_dapil);
-          setSuaraDapil(dapil.suara_dapil);
+          const desa = response.data.data;
+          setNamaDesa(desa.nama_desa);
+          setSuaraDesa(desa.suara_desa);
         })
-        .catch((error) => console.error("Error fetching dapil:", error));
+        .catch((error) => console.error("Error fetching Desa:", error));
     }
-  }, [params.id]);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const id = params.id;
     if (id) {
       try {
-        await axios.put(`http://localhost:8000/api/dapil/${id}`, {
-          nama_dapil,
-          suara_dapil,
+        await axios.put(`http://localhost:8000/api/desa/${id}`, {
+          nama_desa,
+          suara_desa,
+          kecamatan_id: selectedKecamatan,
           paslon_id: selectedPaslon,
         });
-        alert("update data berhasil");
-        router.push("/dataDapil");
+        router.push("/data-desa");
       } catch (error) {
-        console.error("Error updating dapil:", error);
+        console.error("Error updating Partai:", error);
       }
     }
   };
 
-  // console.log("daftarPaslon", daftarPaslon);
-  // console.log("daftarPaslon lenght", daftarPaslon.length);
+  // console.log('daftarJenisPengeluaran', daftarJenisPengeluaran);
+  // console.log('daftarJenisPengeluaran lenght', daftarJenisPengeluaran.length);
 
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4">
       <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
         <div className="p-6">
           <h1 className="text-2xl font-semibold text-gray-800 mb-6">
-            Edit Data Dapil
+            Edit Data Desa
           </h1>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label
                 className="block text-gray-700 text-sm font-medium mb-1"
-                htmlFor="nama_dapil"
+                htmlFor="nama_desa"
               >
-                Nama Dapil
+                Nama Desa
               </label>
               <input
-                id="nama_dapil"
+                id="nama_desa"
                 type="text"
-                value={nama_dapil}
-                onChange={(e) => setNamaDapil(e.target.value)}
-                placeholder="Nama Dapil"
+                value={nama_desa}
+                onChange={(e) => setNamaDesa(e.target.value)}
+                placeholder="Nama Desa"
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
               />
             </div>
+            <label
+              className="block text-gray-700 text-sm font-medium mb-1"
+              htmlFor="suara_desa"
+            >
+              Suara Desa
+            </label>
+            <input
+              id="suara_desa"
+              type="text"
+              value={suara_desa}
+              onChange={(e) => setSuaraDesa(e.target.value)}
+              placeholder="Suara Desa"
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+            />
             <div>
               <label
-                className="block text-gray-700 text-sm font-medium mb-1"
-                htmlFor="quantity"
+                htmlFor="Nama Paslon"
+                className="block text-gray-700 font-medium mb-1"
               >
-                Total Suara Dapil
+                Pilih Nama Kecamatan
               </label>
-              <input
-                id="suara_dapil"
-                type="numeric"
-                value={suara_dapil}
-                onChange={(e) => setSuaraDapil(e.target.value)}
-                placeholder="Total Suara Dapil"
-                required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-              />
+              <select
+                value={selectedKecamatan || ""}
+                onChange={(e) => setSelectedKecamatan(Number(e.target.value))}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+              >
+                <option value="">Pilih Nama Kecamatan</option>
+                {dafatarKecamatan.length > 0 ? (
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  dafatarKecamatan.map((kecamatan: any) => {
+                    //   console.log("paslon", paslon);
+
+                    return (
+                      <option key={kecamatan.id} value={kecamatan.id}>
+                        {kecamatan.nama_kecamatan}
+                      </option>
+                    );
+                  })
+                ) : (
+                  <option value="">Tidak Ada Data Kecamatan</option>
+                )}
+              </select>
             </div>
             <div>
               <label
@@ -140,4 +182,4 @@ const Edit = () => {
   );
 };
 
-export default Edit;
+export default EditDesa;

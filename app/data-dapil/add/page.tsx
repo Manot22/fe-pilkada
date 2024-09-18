@@ -1,46 +1,48 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-
-import axios from "axios";
 import { useState, useEffect } from "react";
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-import { error } from "console";
 
-const KecamatanCreate = () => {
-  const [nama_kecamatan, setNamaKecamatan] = useState("");
-  const [suara_kecamatan, setSuaraKecamatan] = useState("");
+const Create = () => {
+  const [nama_dapil, setNamaDapil] = useState("");
+  const [suara_dapil, setSuaraDapil] = useState("");
   const [daftarPaslon, setDaftarPaslon] = useState([]);
-  const [selectedPaslon, selectedPaslon] = useState("");
-  const [dapil_id, setDapilId] = useState("");
+  const [selectedPaslon, setSelectedPaslon] = useState<number | null>(null);
   const token = Cookies.get("token");
   const router = useRouter();
 
   useEffect(() => {
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     axios
-      .get("http://localhost:8000/api/kecamatan")
+      .get(`http://localhost:8000/api/paslon`)
       .then((daftarPaslon) => setDaftarPaslon(daftarPaslon.data.data))
-      .catch((error) => console.error("Error Fetching kecamatan:", error));
+      .catch((error) => console.error("Error fetching dapil items:", error));
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:8000/api/kecamatan", {
-        nama_kecamatan,
-        suara_kecamatan,
+      await axios.post("http://localhost:8000/api/dapil", {
+        nama_dapil,
+        suara_dapil,
         paslon_id: selectedPaslon,
       });
-      router.push("/dataKec");
+      router.push("/data-dapil");
     } catch (error) {
-      console.error("Error menambah Data Kecamatan", error);
+      console.error("Error creating buku:", error);
     }
   };
+
+  //   console.log('daftarPaslon', daftarPaslon);
+  //   console.log('daftarPaslon lenght', daftarPaslon.length);
+
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4">
       <div className="max-w-lg mx-auto bg-white shadow-lg rounded-lg overflow-hidden p-6">
         <h1 className="text-3xl font-semibold text-gray-800 mb-6">
-          Tambah Data Kecamatan
+          Tambah Dapil
         </h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -48,14 +50,14 @@ const KecamatanCreate = () => {
               htmlFor="nama_dapil"
               className="block text-gray-700 font-medium mb-1"
             >
-              Nama Kecamatan
+              Nama Dapil
             </label>
             <input
-              id="nama_kecamatan"
+              id="nama_dapil"
               type="text"
-              value={nama_kecamatan}
-              onChange={(e) => setNamaKecamatan(e.target.value)}
-              placeholder="Nama Kecamatan"
+              value={nama_dapil}
+              onChange={(e) => setNamaDapil(e.target.value)}
+              placeholder="Nama Dapil"
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
               required
             />
@@ -65,54 +67,47 @@ const KecamatanCreate = () => {
               htmlFor="suara_dapil"
               className="block text-gray-700 font-medium mb-1"
             >
-              Suara Kecamatan
+              Total Suara Dapil
             </label>
             <input
               id="suara_dapil"
-              type="number"
-              // value={suara_dapil}
-              // onChange={(e) => setNomorUrut(e.target.value)}
-              placeholder="Suara Dapil"
+              type="numeric"
+              value={suara_dapil}
+              onChange={(e) => setSuaraDapil(e.target.value)}
+              placeholder="Total Suara Dapil"
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
               required
             />
           </div>
           <div>
             <label
-              htmlFor="paslon_id"
+              htmlFor="Nama Paslon"
               className="block text-gray-700 font-medium mb-1"
             >
-              dapil_id
+              Pilih Nama Pasangan Calon
             </label>
-            <input
-              id="dapil_id"
-              type="text"
-              // onChange={(e) =>
-              //   setImage(e.target.files ? e.target.files[0] : null)
-              // }
-              required
+            <select
+              value={selectedPaslon || ""}
+              onChange={(e) => setSelectedPaslon(Number(e.target.value))}
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-              placeholder="Paslon"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="paslon_id"
-              className="block text-gray-700 font-medium mb-1"
             >
-              paslon_id
-            </label>
-            <input
-              id="text"
-              type="text"
-              // onChange={(e) =>
-              //   setImage(e.target.files ? e.target.files[0] : null)
-              // }
-              required
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-              placeholder="Paslon"
-            />
+              <option value="">Pilih Nama Paslon</option>
+              {daftarPaslon.length > 0 ? (
+                daftarPaslon.map((paslon: any) => {
+                  //   console.log("paslon", paslon);
+
+                  return (
+                    <option key={paslon.id} value={paslon.id}>
+                      {paslon.nama}
+                    </option>
+                  );
+                })
+              ) : (
+                <option value="">Tidak Ada Data Paslon</option>
+              )}
+            </select>
           </div>
+
           <button
             type="submit"
             className="w-full bg-blue-500 text-white rounded-lg px-4 py-2 shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -124,4 +119,5 @@ const KecamatanCreate = () => {
     </div>
   );
 };
-export default KecamatanCreate;
+
+export default Create;

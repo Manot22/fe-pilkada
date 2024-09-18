@@ -66,8 +66,8 @@ const Paslon = () => {
                       </p>
                       <Image
                         src={`${process.env.NEXT_PUBLIC_API_BACKEND}/storage/images/${item.image}`}
-                        width={350}
-                        height={350}
+                        width={200}
+                        height={200}
                         className="w-full max-h-64 object-cover rounded-lg"
                         alt="..."
                       />

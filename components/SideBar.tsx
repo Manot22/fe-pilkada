@@ -40,7 +40,7 @@ const SideBar = () => {
               <ul className="mt-2 space-y-1 px-4">
                 <li>
                   <a
-                    href="/dataDapil"
+                    href="/data-dapil"
                     className="block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700"
                   >
                     Data Dapil
@@ -49,7 +49,7 @@ const SideBar = () => {
 
                 <li>
                   <a
-                    href="/dataKec"
+                    href="/data-kecamatan"
                     className="block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700"
                   >
                     Data Kecamatan
@@ -58,10 +58,19 @@ const SideBar = () => {
 
                 <li>
                   <a
-                    href="dataDesa"
+                    href="data-desa"
                     className="block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700"
                   >
                     Data Desa
+                  </a>
+                </li>
+
+                <li>
+                  <a
+                    href="/data-tps"
+                    className="block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                  >
+                    Data TPS
                   </a>
                 </li>
               </ul>

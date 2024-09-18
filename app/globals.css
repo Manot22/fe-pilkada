@@ -3,6 +3,22 @@
 @tailwind utilities;
 @layer base {
   :root {
-    --radius: 0.5rem
+    --radius: 0.5rem;
   }
+}
+
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+thead,
+tbody,
+tr,
+td,
+th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 16px;
+  text-align: center;
 }
